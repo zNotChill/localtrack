@@ -1,7 +1,7 @@
 package me.znotchill.localtrack.events
 
 import me.znotchill.localtrack.LocalTrack
-import me.znotchill.localtrack.db.BeatmapInfo
+import me.znotchill.localtrack.db.BeatmapEntry
 import me.znotchill.localtrack.db.ProfileSnapshot
 import me.znotchill.localtrack.db.Score
 import me.znotchill.localtrack.payload.GameState
@@ -87,7 +87,7 @@ class GameStateChange(
             }
 
             repo.upsertBeatmap(
-                BeatmapInfo(
+                BeatmapEntry(
                     id = beatmap.id,
                     setId = beatmap.set,
                     checksum = beatmap.checksum,

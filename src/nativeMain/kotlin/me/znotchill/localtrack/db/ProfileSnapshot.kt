@@ -105,7 +105,7 @@ class LocalTrackRepository(
         return newId
     }
 
-    fun upsertBeatmap(beatmap: BeatmapInfo) {
+    fun upsertBeatmap(beatmap: BeatmapEntry) {
         val existing = db.beatmapEntryQueries.getBeatmapById(beatmap.id).executeAsOneOrNull()
         db.beatmapEntryQueries.insertOrReplaceBeatmap(
             id = beatmap.id,
@@ -138,20 +138,11 @@ class LocalTrackRepository(
         )
     }
 
-    fun getBeatmapByChecksum(checksum: String): BeatmapInfo? =
-        db.beatmapEntryQueries.getBeatmapByChecksum(checksum).executeAsOneOrNull()?.toBeatmapInfo()
+    fun getBeatmapByChecksum(checksum: String): BeatmapEntry? =
+        db.beatmapEntryQueries.getBeatmapByChecksum(checksum).executeAsOneOrNull()
 
-    fun getBeatmap(id: Long): BeatmapInfo? =
-        db.beatmapEntryQueries.getBeatmapById(id).executeAsOneOrNull()?.toBeatmapInfo()
-
-    private fun BeatmapEntry.toBeatmapInfo() = BeatmapInfo(
-        id = id, setId = setId, checksum = checksum, artist = artist, artistUnicode = artistUnicode,
-        title = title, titleUnicode = titleUnicode, mapper = mapper, version = version,
-        source = source, tags = tags, status = status, starsTotal = starsTotal, starsAim = starsAim,
-        starsSpeed = starsSpeed, ar = ar, cs = cs, od = od, hp = hp, bpm = bpm, circles = circles,
-        sliders = sliders, spinners = spinners, maxCombo = maxCombo, mp3Length = mp3Length,
-        firstSeenAt = firstSeenAt, lastSeenAt = lastSeenAt
-    )
+    fun getBeatmap(id: Long): BeatmapEntry? =
+        db.beatmapEntryQueries.getBeatmapById(id).executeAsOneOrNull()
 
     fun getRecentScores(limit: Long = 50): List<Score> =
         db.scoreQueries.getRecentScores(limit).executeAsList().map { it.toScore() }
