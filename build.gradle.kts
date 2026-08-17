@@ -26,11 +26,18 @@ repositories {
 }
 
 kotlin {
-//    jvm()
-//    macosArm64()
-//    linuxArm64()
+//    val hostOs = System.getProperty("os.name")
+//    val arch = System.getProperty("os.arch")
+//    when {
+//        hostOs == "Mac OS X" && arch == "x86_64" -> macosX64("native")
+//        hostOs == "Mac OS X" && arch == "aarch64" -> macosArm64("native")
+//        hostOs == "Linux" && (arch == "x86_64" || arch == "amd64") -> linuxX64("native")
+//        hostOs == "Linux" && arch == "aarch64" -> linuxArm64("native")
+//        hostOs.startsWith("Windows") -> mingwX64("native")
+//        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+//    }
+
     linuxX64()
-//    mingwX64()
 
     targets.withType<KotlinNativeTarget>().configureEach {
         binaries {
@@ -46,6 +53,7 @@ kotlin {
             implementation(libs.logback)
             implementation(libs.ktor.server.core)
             implementation(libs.ktor.server.content.negotiation)
+            implementation(libs.ktor.server.cors)
             implementation(libs.ktor.server.cio)
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.websockets)

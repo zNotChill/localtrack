@@ -15,6 +15,7 @@ class GameStateChange(
     val oldState: TosuState,
 ) : Event {
     fun onFire() {
+        println("new: $newGameState old: $oldGameState")
         val repo = LocalTrack.instance.trackRepo
         if (newGameState == GameState.RESULT_SCREEN) {
             if (oldGameState != GameState.PLAY) return
@@ -101,8 +102,8 @@ class GameStateChange(
                     tags = beatmap.tags,
                     status = beatmap.status.name,
                     starsTotal = beatmap.stats.stars.total,
-                    starsAim = beatmap.stats.stars.aim,
-                    starsSpeed = beatmap.stats.stars.speed,
+                    starsAim = beatmap.stats.stars.aim ?: 0.0,
+                    starsSpeed = beatmap.stats.stars.speed ?: 0.0,
                     ar = beatmap.stats.ar.original,
                     cs = beatmap.stats.cs.original,
                     od = beatmap.stats.od.original,

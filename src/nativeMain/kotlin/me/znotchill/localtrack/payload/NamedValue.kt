@@ -268,9 +268,9 @@ data class BeatmapStats(
 @Serializable
 data class Stars(
     val live: Double,
-    val aim: Double,
-    val speed: Double,
-    val sliderFactor: Double,
+    val aim: Double? = null,
+    val speed: Double? = null,
+    val sliderFactor: Double? = null,
     val reading: Double? = null,
     val hitWindow: Double,
     val total: Double

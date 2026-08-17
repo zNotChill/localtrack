@@ -1,0 +1,45 @@
+.map-status-pill {
+    padding: 5px 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    user-select: none;
+    max-width: fit-content;
+    border-radius: 10000px;
+    line-height: 14px;
+    font-size: 14px;
+
+    letter-spacing: 0.5px;
+    font-family: monospace;
+}
+
+/*TODO: make this use variables*/
+
+.map-status-pill.ranked {
+    background-color: hsl(90, 100%, 70%);
+    color: hsl(200, 10%, 25%);
+}
+
+.map-status-pill.qualified {
+    background-color: hsl(200, 100%, 70%);
+    color: hsl(200, 10%, 25%);
+}
+
+.map-status-pill.loved {
+    background-color: hsl(333, 100%, 70%);
+    color: hsl(200, 10%, 25%);
+}
+
+.map-status-pill.pending {
+    background-color: hsl(45, 100%, 70%);
+    color: hsl(200, 10%, 25%);
+}
+
+.map-status-pill.wip {
+    background-color: hsl(20, 100%, 70%);
+    color: hsl(200, 10%, 25%);
+}
+
+.map-status-pill.graveyard {
+    background-color: hsl(0, 0%, 0%);
+    color: hsl(200, 10%, 40%);
+}

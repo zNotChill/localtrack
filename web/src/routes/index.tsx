@@ -1,4 +1,5 @@
 import Container from "~/components/Container";
+import MapList from "~/components/map/MapList";
 
 export default function Home() {
   return (
@@ -7,7 +8,11 @@ export default function Home() {
         "Profile Snapshots"
       }>
         <div>hi</div>
-        <div className="wsp">wsp</div>
+      </Container>
+      <Container header={
+        "Map List"
+      }>
+        <MapList/>
       </Container>
     </main>
   );

@@ -4,6 +4,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.staticCFunction
 import platform.posix.SIGINT
 import platform.posix.SIGTERM
+import platform.posix.atexit
 import platform.posix.signal
 
 object ShutdownHook {
@@ -12,14 +13,14 @@ object ShutdownHook {
         signal(
             SIGINT,
             staticCFunction<Int, Unit> {
-                println("SIGINT")
+                LocalTrack.instance.api.stop()
             }
         )
 
         signal(
             SIGTERM,
             staticCFunction<Int, Unit> {
-                println("SIGTERM")
+                LocalTrack.instance.api.stop()
             }
         )
     }

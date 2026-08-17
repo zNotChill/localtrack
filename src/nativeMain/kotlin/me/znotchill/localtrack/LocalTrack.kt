@@ -105,7 +105,7 @@ fun main() = runBlocking {
     val database = LocalTrackDatabase(driver)
     val json = Json { ignoreUnknownKeys = true }
     val repo = LocalTrackRepository(database, json)
-    println("DB opened! Recent scores: ${repo.getRecentScores(5)}")
+    println("DB opened")
 
     track.db = database
     track.trackRepo = repo
@@ -114,8 +114,8 @@ fun main() = runBlocking {
         track.start()
     }
 
-    ShutdownHook.register()
-
-//    while (1==1) {}
+    LocalTrack.scope.launch {
+        ShutdownHook.register()
+    }
     api.start()
 }

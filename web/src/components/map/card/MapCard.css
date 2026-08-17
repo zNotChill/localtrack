@@ -1,0 +1,43 @@
+.container.map-card {
+    position: relative;
+    height: 100px;
+}
+
+.container.map-card .background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.3) blur(4px);
+    overflow: hidden;
+}
+
+.container.map-card .row {
+    display: flex;
+    gap: 5px;
+}
+
+.container.map-card .content {
+    flex-direction: column;
+    display: flex;
+    position: relative;
+    z-index: 1;
+}
+
+.container.map-card .content .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.container.map-card .map-info {
+    padding: 5px 10px;
+}
+.container.map-card .map-artist {
+    font-weight: 500;
+}
+.container.map-card .map-title {
+    font-weight: 700;
+}
