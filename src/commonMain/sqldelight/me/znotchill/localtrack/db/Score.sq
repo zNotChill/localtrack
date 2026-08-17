@@ -1,0 +1,66 @@
+
+CREATE TABLE scoreEntry (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    beatmapId INTEGER NOT NULL,
+    beatmapChecksum TEXT NOT NULL,
+    playedAt INTEGER NOT NULL,
+    mods TEXT NOT NULL,
+    modRate REAL NOT NULL DEFAULT 1.0,
+    score INTEGER NOT NULL,
+    accuracy REAL NOT NULL,
+    maxCombo INTEGER NOT NULL,
+    rank TEXT NOT NULL,
+    pp REAL,
+    ppFc REAL,
+    count300 INTEGER NOT NULL,
+    count100 INTEGER NOT NULL,
+    count50 INTEGER NOT NULL,
+    countMiss INTEGER NOT NULL,
+    unstableRate REAL,
+    hitErrorArray TEXT
+);
+
+CREATE INDEX scoreEntry_beatmapId ON scoreEntry(beatmapId);
+CREATE INDEX scoreEntry_playedAt ON scoreEntry(playedAt);
+
+insertScore:
+INSERT INTO scoreEntry (
+    beatmapId, beatmapChecksum, playedAt, mods, modRate, score, accuracy,
+    maxCombo, rank, pp, ppFc, count300, count100, count50, countMiss, unstableRate, hitErrorArray
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+getScoresForBeatmap:
+SELECT * FROM scoreEntry
+WHERE beatmapId = :beatmapId
+ORDER BY playedAt DESC;
+
+getRecentScores:
+SELECT * FROM scoreEntry
+ORDER BY playedAt DESC
+LIMIT :limit;
+
+getScoreById:
+SELECT * FROM scoreEntry
+WHERE id = :id;
+
+getBestScoreForBeatmap:
+SELECT * FROM scoreEntry
+WHERE beatmapId = :beatmapId
+ORDER BY pp DESC
+LIMIT 1;
+
+getTopScoresByPp:
+SELECT * FROM scoreEntry
+WHERE pp IS NOT NULL
+ORDER BY pp DESC
+LIMIT :limit;
+
+countScores:
+SELECT COUNT(*) FROM scoreEntry;
+
+deleteScore:
+DELETE FROM scoreEntry
+WHERE id = :id;

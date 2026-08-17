@@ -1,0 +1,16 @@
+.container {
+    background-color: rgb(24, 27, 31);
+    border: 1px solid rgba(204, 204, 220, 0.12);
+}
+
+.container .header {
+    font-size: 20px;
+    font-weight: 500;
+    user-select: none;
+    padding: 10px;
+    border-bottom: 1px solid rgba(204, 204, 220, 0.12);
+}
+
+.container .body {
+    padding: 10px;
+}

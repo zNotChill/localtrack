@@ -1,0 +1,31 @@
+package me.znotchill.localtrack.db
+
+data class BeatmapInfo(
+    val id: Long,
+    val setId: Long,
+    val checksum: String,
+    val artist: String,
+    val artistUnicode: String,
+    val title: String,
+    val titleUnicode: String,
+    val mapper: String,
+    val version: String,
+    val source: String,
+    val tags: String,
+    val status: String,
+    val starsTotal: Double,
+    val starsAim: Double,
+    val starsSpeed: Double,
+    val ar: Double,
+    val cs: Double,
+    val od: Double,
+    val hp: Double,
+    val bpm: Double,
+    val circles: Long,
+    val sliders: Long,
+    val spinners: Long,
+    val maxCombo: Long,
+    val mp3Length: Long,
+    val firstSeenAt: Long,
+    val lastSeenAt: Long
+)
