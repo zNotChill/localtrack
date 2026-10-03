@@ -18,7 +18,7 @@ function StarPill(props: { mode?: GameMode | null, starRating: number }) {
                 <img src={`/icons/${props.mode.toString().toLowerCase()}.png`} />
             )}
 
-            ★{props.starRating}
+            ★ {props.starRating}
         </div>
     )
 }

@@ -1,6 +1,5 @@
 .container.map-card {
     position: relative;
-    height: 100px;
 }
 
 .container.map-card .background {
@@ -13,11 +12,6 @@
     background-position: center;
     filter: brightness(0.3) blur(4px);
     overflow: hidden;
-}
-
-.container.map-card .row {
-    display: flex;
-    gap: 5px;
 }
 
 .container.map-card .content {
@@ -38,14 +32,23 @@
     min-width: 200px;
 }
 .container.map-card .map-artist {
-    font-weight: 500;
+    font-weight: 600;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    opacity: 0.65;
 }
 .container.map-card .map-title {
+    font-size: 18px;
     font-weight: 700;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+.container.map-card .map-diff {
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    line-height: 14px;
 }

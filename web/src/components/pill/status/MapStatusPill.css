@@ -26,6 +26,11 @@
     color: hsl(200, 10%, 25%);
 }
 
+.map-status-pill.local {
+    background-color: hsl(16, 100%, 50%);
+    color: hsl(200, 10%, 25%);
+}
+
 .map-status-pill.wip {
     background-color: hsl(20, 100%, 70%);
     color: hsl(200, 10%, 25%);

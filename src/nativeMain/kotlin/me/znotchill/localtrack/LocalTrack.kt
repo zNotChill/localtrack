@@ -7,6 +7,7 @@ import io.ktor.client.plugins.websocket.*
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,6 +46,7 @@ class LocalTrack {
 
     lateinit var api: LocalTrackAPI
 
+    private var nextState: CompletableDeferred<TosuState>? = null
     suspend fun start() {
         StorageManager.create()
 
@@ -73,6 +75,8 @@ class LocalTrack {
 
                         try {
                             val decoded = json.decodeFromString<TosuState>(text)
+                            nextState?.complete(decoded)
+                            nextState = null
 
                             if (::currentState.isInitialized) {
                                 previousState = currentState
@@ -84,12 +88,17 @@ class LocalTrack {
                                 previousGameState = currentGameState
 
                                 if (decoded.state != previousGameState) {
-                                    GameStateChange(
-                                        decoded.state,
-                                        previousGameState,
-                                        decoded,
-                                        previousState
-                                    ).onFire()
+                                    nextState = CompletableDeferred()
+
+                                    scope.launch {
+                                        GameStateChange(
+                                            decoded.state,
+                                            previousGameState,
+                                            decoded,
+                                            previousState,
+                                            nextState!!
+                                        ).onFire()
+                                    }
                                 }
                             }
 

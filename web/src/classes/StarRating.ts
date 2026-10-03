@@ -94,3 +94,17 @@ export function getStarRatingTextColor(starRating: number): string {
 
     return toHex(sampleGradient(TEXT_COLORS, starRating))
 }
+
+export function getStarRatingSoloTextColor(starRating: number): string {
+    starRating = Math.max(0, starRating)
+
+    if (starRating < 6.5) {
+        return getStarRatingColor(starRating)
+    }
+
+    if (starRating < 9.0) {
+        return getStarRatingTextColor(starRating)
+    }
+
+    return toHex(sampleGradient(TEXT_COLORS, starRating))
+}

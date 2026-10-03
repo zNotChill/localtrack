@@ -45,7 +45,8 @@ object MapSearch {
             "mapper" -> stringPredicate(BeatmapEntryModel.mapper, predicate)
             "version" -> stringPredicate(BeatmapEntryModel.version, predicate)
             "source" -> stringPredicate(BeatmapEntryModel.source, predicate)
-            "status" -> stringPredicate(BeatmapEntryModel.status, predicate)
+            // todo: fix
+//            "status" -> stringPredicate(BeatmapEntryModel.status, predicate)
 
             "id" -> longPredicate(BeatmapEntryModel.id, predicate)
             "setId" -> longPredicate(BeatmapEntryModel.setId, predicate)

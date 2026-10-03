@@ -10,3 +10,25 @@ html {
   background-color: #111217;
   color: rgb(204, 204, 220);
 }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.row {
+  display: flex;
+  gap: 5px;
+}
+
+.row .left {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.row .right {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}

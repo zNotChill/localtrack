@@ -14,14 +14,16 @@ function ScoreList() {
                 when={!scores.error}
                 fallback={<p>Error: {scores.error.message}</p>}
             >
-                <For each={scores()}>
-                    {(score) => (
-                        <ScoreCard
-                            score={score}
-                            map={score.map}
-                        />
-                    )}
-                </For>
+                <div class="card-grid">
+                    <For each={scores()}>
+                        {(score) => (
+                            <ScoreCard
+                                score={score}
+                                map={score.map}
+                            />
+                        )}
+                    </For>
+                </div>
             </Show>
         </Show>
     );

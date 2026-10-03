@@ -7,12 +7,27 @@ export enum GameMode {
     MANIA = 3,
 }
 
+export interface Mods {
+    checksum: string
+    number: number
+    name: string
+    array: ModEntry[]
+    rate: number
+}
+
+export interface ModEntry {
+    acronym: string
+    settings: Map<string, any>
+}
+
 export interface Score {
     id: number
     beatmapId: number
     beatmapChecksum: string
     playedAt: number
-    mods: string[]
+    player: string
+    playerId: number
+    mods: Mods
     modRate: number
     score: number
     accuracy: number

@@ -1,8 +1,46 @@
 package me.znotchill.localtrack.db
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.znotchill.kelp.Model
 import me.znotchill.kelp.Row
+
+@Serializable
+enum class MapStatus {
+    @SerialName("wip")
+    WIP,
+
+    @SerialName("graveyard")
+    GRAVEYARD,
+
+    @SerialName("ranked")
+    RANKED,
+
+    @SerialName("loved")
+    LOVED,
+
+    @SerialName("local")
+    LOCAL,
+
+    @SerialName("qualified")
+    QUALIFIED,
+
+    @SerialName("pending")
+    PENDING;
+
+    companion object {
+        fun fromTosuName(name: String) = when(name) {
+            "wip" -> WIP
+            "graveyard" -> GRAVEYARD
+            "ranked" -> RANKED
+            "loved" -> LOVED
+            "notSubmitted" -> LOCAL
+            "qualified" -> QUALIFIED
+            "pending" -> PENDING
+            else -> LOCAL
+        }
+    }
+}
 
 @Serializable
 data class BeatmapEntry(
@@ -17,7 +55,7 @@ data class BeatmapEntry(
     val version: String,
     val source: String,
     val tags: String,
-    val status: String,
+    val status: MapStatus,
     val starsTotal: Double,
     val starsAim: Double,
     val starsSpeed: Double,
@@ -47,7 +85,7 @@ object BeatmapEntryModel : Model<BeatmapEntry>("beatmaps") {
     val version = column("version") { it.version }
     val source = column("source") { it.source }
     val tags = column("tags") { it.tags }
-    val status = column("status") { it.status }
+    val status = enum("status", MapStatus.serializer()) { it.status }
     val starsTotal = column("starsTotal") { it.starsTotal }
     val starsAim = column("starsAim") { it.starsAim }
     val starsSpeed = column("starsSpeed") { it.starsSpeed }

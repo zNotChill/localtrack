@@ -11,6 +11,8 @@ data class Score(
     val beatmapId: Long,
     val beatmapChecksum: String,
     val playedAt: Long,
+    val player: String,
+    val playerId: Long,
     val mods: Mods,
     val score: Long,
     val accuracy: Double,
@@ -59,6 +61,8 @@ object ScoreModel : Model<Score>("scores") {
     val beatmapId = column("beatmapId") { it.beatmapId }
     val beatmapChecksum = column("beatmapChecksum") { it.beatmapChecksum }
     val playedAt = column("playedAt") { it.playedAt }
+    val player = column("player") { it.player }
+    val playerId = column("playerId") { it.playerId }
     val mods = json(
         "mods",
         Mods.serializer()
@@ -86,6 +90,8 @@ object ScoreModel : Model<Score>("scores") {
             beatmapId = row[beatmapId],
             beatmapChecksum = row[beatmapChecksum],
             playedAt = row[playedAt],
+            player = row[player],
+            playerId = row[playerId],
             mods = row[mods],
             score = row[score],
             accuracy = row[accuracy],

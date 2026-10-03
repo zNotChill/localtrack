@@ -33,7 +33,7 @@ export enum MapStatus {
   GRAVEYARD = "graveyard",
   RANKED = "ranked",
   LOVED = "loved",
-  UNSUBMITTED = "notsubmitted",
+  LOCAL = "local",
   QUALIFIED = "qualified",
   PENDING = "pending"
 }

@@ -6,16 +6,6 @@ export default function Home() {
   return (
     <main>
       <Container header={
-        "Profile Snapshots"
-      }>
-        <div>hi</div>
-      </Container>
-      <Container header={
-        "Map List"
-      }>
-        <MapList/>
-      </Container>
-      <Container header={
         "Score List"
       }>
         <ScoreList/>

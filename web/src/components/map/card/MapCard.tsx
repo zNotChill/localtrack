@@ -26,7 +26,6 @@ function MapCard(props: { map: BeatmapEntry }) {
             </div>
           </div>
           <div class="map-stats">
-
           </div>
         </div>
       </div>
