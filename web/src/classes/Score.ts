@@ -17,6 +17,7 @@ export interface Score {
     score: number
     accuracy: number
     maxCombo: number
+    maxComboAchievable: number
     rank: string
     pp: number | null
     ppFc: number | null

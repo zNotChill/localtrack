@@ -28,10 +28,11 @@ class GameStateChange(
             val beatmap = newState.beatmap
             val profile = newState.profile
 
-            if (results.playerName != profile.name) {
-                println("${results.playerName} != ${profile.name}")
-                return
-            }
+            // seems to be inaccurate sometimes, playerName is just blank
+//            if (results.playerName != profile.name) {
+//                println("${results.playerName} != ${profile.name}")
+//                return
+//            }
 
             val now = Clock.System.now().toEpochMilliseconds()
 
@@ -39,11 +40,11 @@ class GameStateChange(
                 beatmapId = beatmap.id,
                 beatmapChecksum = beatmap.checksum,
                 playedAt = now,
-                mods = results.mods.array.map { it.acronym },
-                modRate = results.mods.rate,
+                mods = newState.play.mods,
                 score = results.score,
                 accuracy = results.accuracy,
                 maxCombo = results.maxCombo,
+                maxComboAchievable = beatmap.stats.maxCombo,
                 rank = results.rank,
                 pp = results.pp.current.takeIf { it != 0.0 },
                 ppFc = results.pp.fc.takeIf { it != 0.0 },

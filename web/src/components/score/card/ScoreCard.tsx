@@ -45,39 +45,55 @@ function ScoreCard(props: { map: BeatmapEntry, score: Score }) {
                   </div>
 
                   <div class="score-stats">
-                      <div class="stat">
-                          <span class="stat-value">
+                      <div class="stat rank">
+                          <span class={`stat-value rank rank-${score.rank}`}>
+                              {score.rank}
+                          </span>
+                          <span class="stat-label">Rank</span>
+                      </div>
+
+                      <div class="stat accuracy">
+                          <span
+                            class={
+                              "stat-value " +
+                              (score.accuracy == 100.0 ? `perfect-value` : ``)
+                          }>
                               {score.accuracy.toFixed(2)}%
                           </span>
                           <span class="stat-label">Accuracy</span>
                       </div>
 
-                      <div class="stat">
-                          <span class="stat-value">
+                      <div class="stat score">
+                          <span
+                            class={
+                              "stat-value " +
+                              (score.score >= 1_000_000.0 ? `perfect-value` : ``)
+                          }>
                               {score.score.toLocaleString()}
                           </span>
                           <span class="stat-label">Score</span>
                       </div>
 
-                      <div class="stat">
-                          <span class="stat-value">
+                      <div class="stat combo">
+                          <span
+                            class={
+                              "stat-value " +
+                              (score.maxCombo == score.maxComboAchievable ? `perfect-value` : ``)
+                          }>
                               {score.maxCombo}x
                           </span>
                           <span class="stat-label">Combo</span>
                       </div>
 
-                      <div class="stat">
-                          <span class="stat-value">
-                              {score.countMiss}
+                      <div class="stat misses">
+                          <span
+                            class={
+                              "stat-value " +
+                              (score.countMiss === 0 ? `perfect-value` : ``)
+                          }>
+                              {score.countMiss.toLocaleString()}
                           </span>
                           <span class="stat-label">Misses</span>
-                      </div>
-
-                      <div class="stat rank">
-                          <span class="stat-value">
-                              {score.rank}
-                          </span>
-                          <span class="stat-label">Rank</span>
                       </div>
                   </div>
                 </div>

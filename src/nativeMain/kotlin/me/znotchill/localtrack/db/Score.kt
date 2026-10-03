@@ -3,6 +3,7 @@ package me.znotchill.localtrack.db
 import kotlinx.serialization.Serializable
 import me.znotchill.kelp.Model
 import me.znotchill.kelp.Row
+import me.znotchill.localtrack.payload.Mods
 
 @Serializable
 data class Score(
@@ -10,11 +11,16 @@ data class Score(
     val beatmapId: Long,
     val beatmapChecksum: String,
     val playedAt: Long,
-    val mods: List<String>,
-    val modRate: Double,
+    val mods: Mods,
     val score: Long,
     val accuracy: Double,
     val maxCombo: Long,
+
+    /**
+     * This is stored on the score itself since LocalTrack doesn't
+     * store different maps and their converts
+     */
+    val maxComboAchievable: Long,
     val rank: String,
     val pp: Double?,
     val ppFc: Double?,
@@ -53,11 +59,14 @@ object ScoreModel : Model<Score>("scores") {
     val beatmapId = column("beatmapId") { it.beatmapId }
     val beatmapChecksum = column("beatmapChecksum") { it.beatmapChecksum }
     val playedAt = column("playedAt") { it.playedAt }
-    val mods = list("mods") { it.mods }
-    val modRate = column("modRate") { it.modRate }
+    val mods = json(
+        "mods",
+        Mods.serializer()
+    ) { it.mods }
     val score = column("score") { it.score }
     val accuracy = column("accuracy") { it.accuracy }
     val maxCombo = column("maxCombo") { it.maxCombo }
+    val maxComboAchievable = column("maxComboAchievable") { it.maxComboAchievable }
     val rank = column("rank") { it.rank }
     val pp = nullable("pp") { it.pp }
     val ppFc = nullable("ppFc") { it.ppFc }
@@ -78,10 +87,10 @@ object ScoreModel : Model<Score>("scores") {
             beatmapChecksum = row[beatmapChecksum],
             playedAt = row[playedAt],
             mods = row[mods],
-            modRate = row[modRate],
             score = row[score],
             accuracy = row[accuracy],
             maxCombo = row[maxCombo],
+            maxComboAchievable = row[maxComboAchievable],
             rank = row[rank],
             pp = row[pp],
             ppFc = row[ppFc],

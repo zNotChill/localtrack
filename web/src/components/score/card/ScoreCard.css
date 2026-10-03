@@ -1,6 +1,6 @@
 .score-stats {
     display: flex;
-    gap: 24px;
+    gap: 14px;
     align-items: center;
     justify-content: left;
 }
@@ -8,6 +8,19 @@
 .stat {
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+
+.stat.accuracy {
+    width: 90px;
+}
+
+.stat.score {
+    width: 90px;
+}
+
+.stat.combo {
+    width: 70px;
 }
 
 .stat-value {
@@ -29,4 +42,37 @@
 .columns {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+}
+
+.perfect-value {
+    --color: #A8F062;
+    text-shadow: 0 0 6px var(--color);
+    color: var(--color);
+}
+
+.rank .rank-X {
+    --color: #de31ae;
+}
+.rank .rank-S {
+    --color: #02b5c3;
+}
+.rank .rank-A {
+    --color: #88da20;
+}
+.rank .rank-B {
+    --color: #e3b130;
+}
+.rank .rank-C {
+    --color: #ff8e5d;
+}
+.rank .rank-D {
+    --color: #ff5a5a;
+}
+.rank .rank-F {
+    --color: #3f3f3f;
+}
+
+.rank {
+    text-shadow: 0 0 6px var(--color);
+    color: var(--color);
 }
