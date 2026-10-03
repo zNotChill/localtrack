@@ -1,0 +1,32 @@
+.score-stats {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    justify-content: left;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.stat-label {
+    font-size: 14px;
+    opacity: 0.65;
+}
+
+.played-at {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}

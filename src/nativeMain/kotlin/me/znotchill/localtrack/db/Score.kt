@@ -24,8 +24,29 @@ data class Score(
     val countMiss: Long,
     val unstableRate: Double?,
     val hitErrorArray: List<Double>,
-    val misses: List<Long> = emptyList()
+    val misses: List<Long> = emptyList(),
+
+    val isConvert: Boolean = true,
+    val mode: GameMode,
 )
+
+@Serializable
+enum class GameMode {
+    STANDARD,
+    TAIKO,
+    CATCH,
+    MANIA;
+
+    companion object {
+        fun fromNumber(number: Int) = when(number) {
+            0 -> STANDARD
+            1 -> TAIKO
+            2 -> CATCH
+            3 -> MANIA
+            else -> STANDARD
+        }
+    }
+}
 
 object ScoreModel : Model<Score>("scores") {
     val id = column("id") { it.id }
@@ -47,6 +68,8 @@ object ScoreModel : Model<Score>("scores") {
     val unstableRate = nullable("unstableRate") { it.unstableRate }
     val hitErrorArray = list("hitErrorArray") { it.hitErrorArray }
     val misses = list("misses") { it.misses }
+    val isConvert = column("isConvert") { it.isConvert }
+    val mode = enum("mode", GameMode.serializer()) { it.mode }
 
     override fun decode(row: Row): Score {
         return Score(
@@ -68,7 +91,10 @@ object ScoreModel : Model<Score>("scores") {
             countMiss = row[countMiss],
             unstableRate = row[unstableRate],
             hitErrorArray = row[hitErrorArray],
-            misses = row[misses]
+            misses = row[misses],
+
+            isConvert = row[isConvert],
+            mode = row[mode],
         )
     }
 }

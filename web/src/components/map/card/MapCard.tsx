@@ -1,8 +1,8 @@
 import { BeatmapEntry, MapStatus } from "~/classes/Map";
 import "./MapCard.css";
 import Container from "../../Container";
-import MapStatusPill from "../statusPill/MapStatusPill";
-import StarPill from "../starPill/StarPill";
+import MapStatusPill from "../../pill/status/MapStatusPill";
+import StarPill from "../../pill/star/StarPill";
 
 function MapCard(props: { map: BeatmapEntry }) {
   return (

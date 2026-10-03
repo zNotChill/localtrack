@@ -2,6 +2,7 @@ package me.znotchill.localtrack.events
 
 import me.znotchill.localtrack.LocalTrack
 import me.znotchill.localtrack.db.BeatmapEntry
+import me.znotchill.localtrack.db.GameMode
 import me.znotchill.localtrack.db.ProfileSnapshot
 import me.znotchill.localtrack.db.Score
 import me.znotchill.localtrack.payload.GameState
@@ -18,13 +19,19 @@ class GameStateChange(
         println("new: $newGameState old: $oldGameState")
         val repo = LocalTrack.instance.repo
         if (newGameState == GameState.RESULT_SCREEN) {
-            if (oldGameState != GameState.PLAY) return
+            if (oldGameState != GameState.PLAY) {
+                println("old game state is not play")
+                return
+            }
 
             val results = newState.resultsScreen
             val beatmap = newState.beatmap
             val profile = newState.profile
 
-            if (results.playerName != profile.name) return
+            if (results.playerName != profile.name) {
+                println("${results.playerName} != ${profile.name}")
+                return
+            }
 
             val now = Clock.System.now().toEpochMilliseconds()
 
@@ -45,7 +52,10 @@ class GameStateChange(
                 count50 = results.hits.fifty,
                 countMiss = results.hits.miss,
                 unstableRate = newState.play.unstableRate.takeIf { it != 0.0 },
-                hitErrorArray = newState.play.hitErrorArray
+                hitErrorArray = newState.play.hitErrorArray,
+
+                isConvert = beatmap.isConvert,
+                mode = GameMode.fromNumber(newState.play.mode.number)
             )
 
             val newSnapshot = ProfileSnapshot(

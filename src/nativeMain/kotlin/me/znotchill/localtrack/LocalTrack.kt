@@ -23,6 +23,7 @@ import me.znotchill.localtrack.events.GameStateChange
 import me.znotchill.localtrack.payload.GameState
 import me.znotchill.localtrack.payload.TosuState
 import me.znotchill.localtrack.storage.StorageManager
+import kotlin.time.Duration.Companion.milliseconds
 
 class LocalTrack {
     companion object {
@@ -44,57 +45,69 @@ class LocalTrack {
 
     lateinit var api: LocalTrackAPI
 
-    suspend fun start() = run {
-        try {
-            StorageManager.create()
+    suspend fun start() {
+        StorageManager.create()
 
-            client.webSocket(
-                method = HttpMethod.Get,
-                host = "127.0.0.1",
-                port = 24050,
-                path = "/websocket/v2"
-            ) {
-//            val timeSource = TimeSource.Monotonic
-//            var windowStart = timeSource.markNow()
-//            var count = 0
-                while (true) {
-                    val msg = incoming.receive() as Frame.Text
-                    val text = msg.readText()
-                    try {
-                        val decoded = json.decodeFromString<TosuState>(text)
+        var delay = 1_000L
 
-                        if (::currentState.isInitialized) {
-                            previousState = currentState
-                        }
-                        currentState = decoded
+        while (true) {
+            try {
+                println("Connecting to tosu!...")
 
-                        if (::currentGameState.isInitialized) {
-                            previousGameState = currentGameState
-                            if (decoded.state != previousGameState) {
-                                GameStateChange(
-                                    decoded.state,
-                                    previousGameState,
+                client.webSocket(
+                    method = HttpMethod.Get,
+                    host = "127.0.0.1",
+                    port = 24050,
+                    path = "/websocket/v2"
+                ) {
+                    println("WebSocket connected")
+                    delay = 1_000L
 
-                                    decoded,
-                                    previousState
-                                ).onFire()
+                    while (true) {
+                        val msg = incoming.receive()
+
+                        if (msg !is Frame.Text)
+                            continue
+
+                        val text = msg.readText()
+
+                        try {
+                            val decoded = json.decodeFromString<TosuState>(text)
+
+                            if (::currentState.isInitialized) {
+                                previousState = currentState
                             }
-                        }
-                        currentGameState = decoded.state
 
-//                    count++
-//                    if (windowStart.elapsedNow().inWholeMilliseconds >= 1000) {
-//                        println("Messages/sec: $count")
-//                        count = 0
-//                        windowStart = timeSource.markNow()
-//                    }
-                    } catch (e: Exception) {
-                        println("decode failed: ${e.message}")
+                            currentState = decoded
+
+                            if (::currentGameState.isInitialized) {
+                                previousGameState = currentGameState
+
+                                if (decoded.state != previousGameState) {
+                                    GameStateChange(
+                                        decoded.state,
+                                        previousGameState,
+                                        decoded,
+                                        previousState
+                                    ).onFire()
+                                }
+                            }
+
+                            currentGameState = decoded.state
+                        } catch (e: Exception) {
+                            println("decode failed: ${e.message}")
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                println("WebSocket disconnected: ${e.message}")
             }
-        } catch (e: Exception) {
-//            e.printStackTrace()
+
+            println("Reconnecting in ${delay}ms...")
+
+            kotlinx.coroutines.delay(delay.milliseconds)
+
+            delay = (delay * 2).coerceAtMost(30_000L)
         }
     }
 }

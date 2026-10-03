@@ -272,7 +272,7 @@ data class Stars(
     val speed: Double? = null,
     val sliderFactor: Double? = null,
     val reading: Double? = null,
-    val hitWindow: Double,
+    val hitWindow: Double? = null,
     val total: Double
 )
 

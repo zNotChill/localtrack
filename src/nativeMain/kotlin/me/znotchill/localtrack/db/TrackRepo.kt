@@ -1,5 +1,6 @@
 package me.znotchill.localtrack.db
 
+import kotlinx.serialization.Serializable
 import me.znotchill.kelp.Database
 import me.znotchill.kelp.UserModel.update
 import me.znotchill.kelp.UserModel.where
@@ -69,4 +70,30 @@ class TrackRepo(
             limit
         )
     }
+
+    suspend fun getBeatmap(id: Long): BeatmapEntry? {
+        return BeatmapEntryModel.where(database) {
+            BeatmapEntryModel.id eq id
+        }.firstOrNull()
+    }
+
+    suspend fun getRecentScoresWithBeatmaps(limit: Long): ScoresResponse {
+        val scores = getRecentScores(limit)
+
+        val beatmaps = scores
+            .distinctBy { it.beatmapId }
+            .mapNotNull { getBeatmap(it.beatmapId) }
+
+        return ScoresResponse(
+            beatmaps = beatmaps,
+            scores = scores
+        )
+    }
 }
+
+
+@Serializable
+data class ScoresResponse(
+    val beatmaps: List<BeatmapEntry>,
+    val scores: List<Score>
+)

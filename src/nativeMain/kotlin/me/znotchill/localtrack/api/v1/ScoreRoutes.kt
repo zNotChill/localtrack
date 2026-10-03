@@ -1,11 +1,8 @@
 package me.znotchill.localtrack.api.v1
 
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import io.ktor.server.routing.query
-import io.ktor.server.routing.route
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import me.znotchill.localtrack.LocalTrack
 import me.znotchill.localtrack.api.ApiMessage
 import me.znotchill.localtrack.api.respond
@@ -15,7 +12,7 @@ fun Route.scoreRoutesV1() {
     route("/scores") {
         get {
             call.respond(
-                LocalTrack.instance.repo.getRecentScores(50)
+                LocalTrack.instance.repo.getRecentScoresWithBeatmaps(50)
             )
         }
         query {
@@ -26,8 +23,11 @@ fun Route.scoreRoutesV1() {
                     ApiMessage.INVALID_REQUEST_BODY
                 )
             }
+
             call.respond(
-                LocalTrack.instance.repo.getRecentScores(request.limit ?: 50)
+                LocalTrack.instance.repo.getRecentScoresWithBeatmaps(
+                    request.limit ?: 50
+                )
             )
         }
     }

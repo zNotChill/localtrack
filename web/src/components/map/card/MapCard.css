@@ -34,10 +34,18 @@
 
 .container.map-card .map-info {
     padding: 5px 10px;
+    max-width: 500px;
+    min-width: 200px;
 }
 .container.map-card .map-artist {
     font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .container.map-card .map-title {
     font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

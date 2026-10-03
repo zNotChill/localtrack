@@ -1,11 +1,10 @@
-.star-pill {
+.pill {
     padding: 5px 10px;
+    text-transform: uppercase;
     font-weight: 700;
     user-select: none;
     max-width: fit-content;
     border-radius: 10000px;
     line-height: 14px;
     font-size: 14px;
-
-    color: #000000;
 }

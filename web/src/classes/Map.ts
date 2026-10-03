@@ -46,7 +46,6 @@ interface MapApiResponse {
 }
 
 export async function fetchMaps(): Promise<BeatmapEntry[]> {
-  console.log("HI")
   const res = await fetch("http://127.0.0.1:1727/api/v1/map", {
     method: "QUERY",
     headers: {

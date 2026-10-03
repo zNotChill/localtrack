@@ -1,13 +1,5 @@
-.map-status-pill {
-    padding: 5px 10px;
-    text-transform: uppercase;
-    font-weight: 700;
-    user-select: none;
-    max-width: fit-content;
-    border-radius: 10000px;
-    line-height: 14px;
-    font-size: 14px;
 
+.map-status-pill {
     letter-spacing: 0.5px;
     font-family: monospace;
 }
