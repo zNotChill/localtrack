@@ -20,7 +20,7 @@ class LocalTrackAPI {
     fun Application.apiModule() {
         install(CORS) {
             allowMethod(HttpMethod.Query)
-            allowHost("127.0.0.1:3000")
+            allowHost("localhost:3000")
             allowHeader(HttpHeaders.ContentType)
         }
         install(ContentNegotiation) {

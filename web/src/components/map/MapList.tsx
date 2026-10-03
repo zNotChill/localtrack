@@ -1,5 +1,4 @@
 import { fetchMaps } from "~/classes/Map";
-import Container from "../Container";
 import { createResource, For, Show } from "solid-js";
 import MapCard from "./card/MapCard";
 

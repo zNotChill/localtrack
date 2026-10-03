@@ -14,9 +14,9 @@ class GameStateChange(
     val newState: TosuState,
     val oldState: TosuState,
 ) : Event {
-    fun onFire() {
+    suspend fun onFire() {
         println("new: $newGameState old: $oldGameState")
-        val repo = LocalTrack.instance.trackRepo
+        val repo = LocalTrack.instance.repo
         if (newGameState == GameState.RESULT_SCREEN) {
             if (oldGameState != GameState.PLAY) return
 
@@ -47,7 +47,6 @@ class GameStateChange(
                 unstableRate = newState.play.unstableRate.takeIf { it != 0.0 },
                 hitErrorArray = newState.play.hitErrorArray
             )
-            repo.insertScore(score)
 
             val newSnapshot = ProfileSnapshot(
                 timestamp = now,
@@ -65,29 +64,7 @@ class GameStateChange(
                 matchmakingIsProvisional = profile.matchmaking.isProvisional
             )
 
-            val latest = repo.getLatestProfileSnapshot()
-            val isUnchanged = latest != null &&
-                    latest.pp == newSnapshot.pp &&
-                    latest.level == newSnapshot.level &&
-                    latest.globalRank == newSnapshot.globalRank &&
-                    latest.countryCode == newSnapshot.countryCode &&
-                    latest.accuracy == newSnapshot.accuracy &&
-                    latest.playCount == newSnapshot.playCount &&
-                    latest.rankedScore == newSnapshot.rankedScore &&
-                    latest.matchmakingRating == newSnapshot.matchmakingRating &&
-                    latest.matchmakingRank == newSnapshot.matchmakingRank &&
-                    latest.matchmakingPlays == newSnapshot.matchmakingPlays &&
-                    latest.matchmakingWins == newSnapshot.matchmakingWins &&
-                    latest.matchmakingIsProvisional == newSnapshot.matchmakingIsProvisional
-
-            if (!isUnchanged) {
-                repo.insertProfileSnapshot(newSnapshot)
-                println("profile snapshot inserted (changed)")
-            } else {
-                println("profile snapshot skipped (unchanged)")
-            }
-
-            repo.upsertBeatmap(
+            val beatmapEntry =
                 BeatmapEntry(
                     id = beatmap.id,
                     setId = beatmap.set,
@@ -117,6 +94,11 @@ class GameStateChange(
                     firstSeenAt = now,
                     lastSeenAt = now
                 )
+
+            repo.recordScore(
+                score = score,
+                profileSnapshot = newSnapshot,
+                beatmap = beatmapEntry
             )
 
             println("new play set! score, profile snapshot, and beatmap info in/upserted")

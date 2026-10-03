@@ -1,7 +1,6 @@
 package me.znotchill.localtrack
 
-import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import io.github.smyrgeorge.sqlx4k.sqlite.SQLite
 import io.ktor.client.*
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.websocket.*
@@ -13,13 +12,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
+import me.znotchill.kelp.Database
+import me.znotchill.kelp.dialects.SqliteDialect
 import me.znotchill.localtrack.api.LocalTrackAPI
-import me.znotchill.localtrack.db.LocalTrackDatabase
-import me.znotchill.localtrack.db.LocalTrackRepository
+import me.znotchill.localtrack.db.BeatmapEntryModel
+import me.znotchill.localtrack.db.ProfileSnapshotModel
+import me.znotchill.localtrack.db.ScoreModel
+import me.znotchill.localtrack.db.TrackRepo
 import me.znotchill.localtrack.events.GameStateChange
 import me.znotchill.localtrack.payload.GameState
 import me.znotchill.localtrack.payload.TosuState
+import me.znotchill.localtrack.storage.StorageManager
 
 class LocalTrack {
     companion object {
@@ -36,13 +39,15 @@ class LocalTrack {
     lateinit var previousGameState: GameState
     lateinit var currentGameState: GameState
 
-    lateinit var trackRepo: LocalTrackRepository
-    lateinit var db: LocalTrackDatabase
+    lateinit var repo: TrackRepo
+    lateinit var db: Database
 
     lateinit var api: LocalTrackAPI
 
     suspend fun start() = run {
         try {
+            StorageManager.create()
+
             client.webSocket(
                 method = HttpMethod.Get,
                 host = "127.0.0.1",
@@ -52,7 +57,6 @@ class LocalTrack {
 //            val timeSource = TimeSource.Monotonic
 //            var windowStart = timeSource.markNow()
 //            var count = 0
-
                 while (true) {
                     val msg = incoming.receive() as Frame.Text
                     val text = msg.readText()
@@ -101,14 +105,29 @@ fun main() = runBlocking {
     val api = LocalTrackAPI()
     LocalTrack.instance.api = api
 
-    val driver: SqlDriver = NativeSqliteDriver(LocalTrackDatabase.Schema, "localtrack.db")
-    val database = LocalTrackDatabase(driver)
-    val json = Json { ignoreUnknownKeys = true }
-    val repo = LocalTrackRepository(database, json)
+    val database = Database(
+        driver = SQLite(
+            url = "sqlite://localtrack.db"
+        ),
+        dialect = SqliteDialect
+    )
+
+    try {
+        database.createTable(ScoreModel)
+        database.createTable(BeatmapEntryModel)
+        database.createTable(ProfileSnapshotModel)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
     println("DB opened")
 
     track.db = database
-    track.trackRepo = repo
+    track.repo = TrackRepo(database)
+
+    println("ALL SCORES:")
+    println(
+        ScoreModel.getAll(database)
+    )
 
     LocalTrack.scope.launch {
         track.start()

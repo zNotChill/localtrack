@@ -1,9 +1,8 @@
 package me.znotchill.localtrack.db
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import me.znotchill.kelp.Model
+import me.znotchill.kelp.Row
 
-@Serializable
 data class ProfileSnapshot(
     val id: Long = 0,
     val timestamp: Long,
@@ -19,202 +18,57 @@ data class ProfileSnapshot(
     val matchmakingPlays: Long,
     val matchmakingWins: Long,
     val matchmakingIsProvisional: Boolean
-)
-
-@Serializable
-data class Score(
-    val id: Long = 0,
-    val beatmapId: Long,
-    val beatmapChecksum: String,
-    val playedAt: Long,
-    val mods: List<String>,
-    val modRate: Double,
-    val score: Long,
-    val accuracy: Double,
-    val maxCombo: Long,
-    val rank: String,
-    val pp: Double?,
-    val ppFc: Double?,
-    val count300: Long,
-    val count100: Long,
-    val count50: Long,
-    val countMiss: Long,
-    val unstableRate: Double?,
-    val hitErrorArray: List<Double>,
-    val misses: List<Long> = emptyList()
-)
-
-class LocalTrackRepository(
-    private val db: LocalTrackDatabase,
-    private val json: Json
 ) {
+    fun isUnchanged(other: ProfileSnapshot?) = other != null &&
+            pp == other.pp &&
+            level == other.level &&
+            globalRank == other.globalRank &&
+            countryCode == other.countryCode &&
+            accuracy == other.accuracy &&
+            playCount == other.playCount &&
+            rankedScore == other.rankedScore &&
+            matchmakingRating == other.matchmakingRating &&
+            matchmakingRank == other.matchmakingRank &&
+            matchmakingPlays == other.matchmakingPlays &&
+            matchmakingWins == other.matchmakingWins &&
+            matchmakingIsProvisional == other.matchmakingIsProvisional
 
-    fun insertProfileSnapshot(snapshot: ProfileSnapshot) {
-        db.profileSnapshotQueries.insertProfileSnapshot(
-            timestamp = snapshot.timestamp,
-            pp = snapshot.pp,
-            level = snapshot.level,
-            globalRank = snapshot.globalRank,
-            countryCode = snapshot.countryCode,
-            accuracy = snapshot.accuracy,
-            playCount = snapshot.playCount,
-            rankedScore = snapshot.rankedScore,
-            matchmakingRating = snapshot.matchmakingRating,
-            matchmakingRank = snapshot.matchmakingRank,
-            matchmakingPlays = snapshot.matchmakingPlays,
-            matchmakingWins = snapshot.matchmakingWins,
-            matchmakingIsProvisional = if (snapshot.matchmakingIsProvisional) 1L else 0L
+}
+
+object ProfileSnapshotModel : Model<ProfileSnapshot>("profile_snapshots") {
+    val id = column("id") { it.id }
+    val timestamp = column("timestamp") { it.timestamp }
+    val pp = column("pp") { it.pp }
+    val level = column("level") { it.level }
+    val globalRank = column("globalRank") { it.globalRank }
+    val countryCode = column("countryCode") { it.countryCode }
+    val accuracy = column("accuracy") { it.accuracy }
+    val playCount = column("playCount") { it.playCount }
+    val rankedScore = column("rankedScore") { it.rankedScore }
+    val matchmakingRating = column("matchmakingRating") { it.matchmakingRating }
+    val matchmakingRank = column("matchmakingRank") { it.matchmakingRank }
+    val matchmakingPlays = column("matchmakingPlays") { it.matchmakingPlays }
+    val matchmakingWins = column("matchmakingWins") { it.matchmakingWins }
+    val matchmakingIsProvisional = column("matchmakingIsProvisional") {
+        it.matchmakingIsProvisional
+    }
+
+    override fun decode(row: Row): ProfileSnapshot {
+        return ProfileSnapshot(
+            id = row[id],
+            timestamp = row[timestamp],
+            pp = row[pp],
+            level = row[level],
+            globalRank = row[globalRank],
+            countryCode = row[countryCode],
+            accuracy = row[accuracy],
+            playCount = row[playCount],
+            rankedScore = row[rankedScore],
+            matchmakingRating = row[matchmakingRating],
+            matchmakingRank = row[matchmakingRank],
+            matchmakingPlays = row[matchmakingPlays],
+            matchmakingWins = row[matchmakingWins],
+            matchmakingIsProvisional = row[matchmakingIsProvisional]
         )
     }
-
-    fun getLatestProfileSnapshot(): ProfileSnapshot? =
-        db.profileSnapshotQueries.getLatestSnapshot().executeAsOneOrNull()?.toProfileSnapshot()
-
-    fun getAllProfileSnapshots(): List<ProfileSnapshot> =
-        db.profileSnapshotQueries.getAllSnapshots().executeAsList().map { it.toProfileSnapshot() }
-
-    fun getProfileSnapshots(from: Long, to: Long): List<ProfileSnapshot> =
-        db.profileSnapshotQueries.getSnapshotsBetween(from, to).executeAsList().map { it.toProfileSnapshot() }
-
-    fun insertScore(scoreData: Score): Long {
-        var newId = 0L
-        db.transaction {
-            db.scoreQueries.insertScore(
-                beatmapId = scoreData.beatmapId,
-                beatmapChecksum = scoreData.beatmapChecksum,
-                playedAt = scoreData.playedAt,
-                mods = scoreData.mods.joinToString(","),
-                modRate = scoreData.modRate,
-                score = scoreData.score,
-                accuracy = scoreData.accuracy,
-                maxCombo = scoreData.maxCombo,
-                rank = scoreData.rank,
-                pp = scoreData.pp,
-                ppFc = scoreData.ppFc,
-                count300 = scoreData.count300,
-                count100 = scoreData.count100,
-                count50 = scoreData.count50,
-                countMiss = scoreData.countMiss,
-                unstableRate = scoreData.unstableRate,
-                hitErrorArray = json.encodeToString(scoreData.hitErrorArray)
-            )
-
-            newId = db.scoreQueries.lastInsertRowId().executeAsOne()
-
-        }
-        return newId
-    }
-
-    fun upsertBeatmap(beatmap: BeatmapEntry) {
-        val existing = db.beatmapEntryQueries.getBeatmapById(beatmap.id).executeAsOneOrNull()
-        db.beatmapEntryQueries.insertOrReplaceBeatmap(
-            id = beatmap.id,
-            setId = beatmap.setId,
-            checksum = beatmap.checksum,
-            artist = beatmap.artist,
-            artistUnicode = beatmap.artistUnicode,
-            title = beatmap.title,
-            titleUnicode = beatmap.titleUnicode,
-            mapper = beatmap.mapper,
-            version = beatmap.version,
-            source = beatmap.source,
-            tags = beatmap.tags,
-            status = beatmap.status,
-            starsTotal = beatmap.starsTotal,
-            starsAim = beatmap.starsAim,
-            starsSpeed = beatmap.starsSpeed,
-            ar = beatmap.ar,
-            cs = beatmap.cs,
-            od = beatmap.od,
-            hp = beatmap.hp,
-            bpm = beatmap.bpm,
-            circles = beatmap.circles,
-            sliders = beatmap.sliders,
-            spinners = beatmap.spinners,
-            maxCombo = beatmap.maxCombo,
-            mp3Length = beatmap.mp3Length,
-            firstSeenAt = existing?.firstSeenAt ?: beatmap.firstSeenAt,
-            lastSeenAt = beatmap.lastSeenAt
-        )
-    }
-
-    fun getBeatmapByChecksum(checksum: String): BeatmapEntry? =
-        db.beatmapEntryQueries.getBeatmapByChecksum(checksum).executeAsOneOrNull()
-
-    fun getBeatmap(id: Long): BeatmapEntry? =
-        db.beatmapEntryQueries.getBeatmapById(id).executeAsOneOrNull()
-
-    fun getRecentScores(limit: Long = 50): List<Score> =
-        db.scoreQueries.getRecentScores(limit).executeAsList().map { it.toScore() }
-
-    fun getScoresForBeatmap(beatmapId: Long): List<Score> =
-        db.scoreQueries.getScoresForBeatmap(beatmapId).executeAsList().map { it.toScore() }
-
-    fun getBestScoreForBeatmap(beatmapId: Long): Score? =
-        db.scoreQueries.getBestScoreForBeatmap(beatmapId).executeAsOneOrNull()?.toScore()
-
-    fun getTopScoresByPp(limit: Long = 100): List<Score> =
-        db.scoreQueries.getTopScoresByPp(limit).executeAsList().map { it.toScore() }
-
-    fun countScores(): Long =
-        db.scoreQueries.countScores().executeAsOne()
-
-    private fun ProfileSnapshotEntry.toProfileSnapshot() = ProfileSnapshot(
-        id = id,
-        timestamp = timestamp,
-        pp = pp,
-        level = level,
-        globalRank = globalRank,
-        countryCode = countryCode,
-        accuracy = accuracy,
-        playCount = playCount,
-        rankedScore = rankedScore,
-        matchmakingRating = matchmakingRating,
-        matchmakingRank = matchmakingRank,
-        matchmakingPlays = matchmakingPlays,
-        matchmakingWins = matchmakingWins,
-        matchmakingIsProvisional = matchmakingIsProvisional == 1L
-    )
-
-    private fun GetTopScoresByPp.toScore(): Score = Score(
-        id = id,
-        beatmapId = beatmapId,
-        beatmapChecksum = beatmapChecksum,
-        playedAt = playedAt,
-        mods = mods.split(",").filter { it.isNotBlank() },
-        modRate = modRate,
-        score = score,
-        accuracy = accuracy,
-        maxCombo = maxCombo,
-        rank = rank,
-        pp = pp,
-        ppFc = ppFc,
-        count300 = count300,
-        count100 = count100,
-        count50 = count50,
-        countMiss = countMiss,
-        unstableRate = unstableRate,
-        hitErrorArray = hitErrorArray?.let { json.decodeFromString<List<Double>>(it) } ?: emptyList()
-    )
-
-    private fun ScoreEntry.toScore(): Score = Score(
-        id = id,
-        beatmapId = beatmapId,
-        beatmapChecksum = beatmapChecksum,
-        playedAt = playedAt,
-        mods = mods.split(",").filter { it.isNotBlank() },
-        modRate = modRate,
-        score = score,
-        accuracy = accuracy,
-        maxCombo = maxCombo,
-        rank = rank,
-        pp = pp,
-        ppFc = ppFc,
-        count300 = count300,
-        count100 = count100,
-        count50 = count50,
-        countMiss = countMiss,
-        unstableRate = unstableRate,
-        hitErrorArray = hitErrorArray?.let { json.decodeFromString<List<Double>>(it) } ?: emptyList()
-    )
 }

@@ -63,7 +63,10 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation("me.znotchill.kiwi:core:1.0.0")
             implementation("me.znotchill.kiwi:network:1.0.0")
-            implementation("app.cash.sqldelight:native-driver:2.0.2")
+            implementation("me.znotchill:kelp:1.0.0")
+            implementation("io.github.smyrgeorge:sqlx4k:1.13.0")
+            implementation("io.github.smyrgeorge:sqlx4k-sqlite:1.13.0")
+            implementation("com.squareup.okio:okio:3.18.1")
         }
     }
 }

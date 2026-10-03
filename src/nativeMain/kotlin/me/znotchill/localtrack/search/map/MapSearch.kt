@@ -1,109 +1,147 @@
 package me.znotchill.localtrack.search.map
 
+import me.znotchill.kelp.Database
+import me.znotchill.kelp.UserModel.where
+import me.znotchill.kelp.column.Column
+import me.znotchill.kelp.conditions.Condition
+import me.znotchill.kelp.conditions.and
+import me.znotchill.kelp.conditions.contains
+import me.znotchill.kelp.conditions.eq
+import me.znotchill.kelp.conditions.gt
+import me.znotchill.kelp.conditions.gte
+import me.znotchill.kelp.conditions.lt
+import me.znotchill.kelp.conditions.lte
+import me.znotchill.kelp.conditions.neq
 import me.znotchill.localtrack.LocalTrack
 import me.znotchill.localtrack.api.v1.queries.MapQuery
 import me.znotchill.localtrack.db.BeatmapEntry
-import me.znotchill.localtrack.db.LocalTrackDatabase
+import me.znotchill.localtrack.db.BeatmapEntryModel
 
 object MapSearch {
-    val db: LocalTrackDatabase
+    val db: Database
         get() = LocalTrack.instance.db
 
-    fun queryBeatmaps(query: MapQuery): List<BeatmapEntry> {
-        var results = db.beatmapEntryQueries.getAllBeatmaps()
-            .executeAsList()
+    suspend fun queryBeatmaps(query: MapQuery): List<BeatmapEntry> {
+        val conditions = query.predicates.mapNotNull(::predicate)
 
-        for (predicate in query.predicates) {
-            results = results.filter { matchesPredicate(it, predicate) }
-        }
-
-        query.sortBy?.let { field ->
-            val comparator = beatmapComparator(field)
-            results = if (query.sortDescending) results.sortedWith(comparator.reversed())
-            else results.sortedWith(comparator)
-        }
-
-        return results.drop(query.offset.toInt()).take(query.limit.toInt())
-    }
-
-    private fun matchesPredicate(map: BeatmapEntry, predicate: FilterPredicate): Boolean {
-        val fieldValue: Any = when (predicate.field) {
-            "artist" -> map.artist
-            "title" -> map.title
-            "mapper" -> map.mapper
-            "status" -> map.status
-            "starsTotal" -> map.starsTotal
-            "starsAim" -> map.starsAim
-            "starsSpeed" -> map.starsSpeed
-            "spinners" -> map.spinners
-            "id" -> map.id
-            "setId" -> map.setId
-            "circles" -> map.circles
-            "sliders" -> map.sliders
-            "maxCombo" -> map.maxCombo
-            "mp3Length" -> map.mp3Length
-            "ar" -> map.ar
-            "cs" -> map.cs
-            "od" -> map.od
-            "hp" -> map.hp
-            "bpm" -> map.bpm
-            else -> return false
-        }
-
-        return when (fieldValue) {
-            is String -> compareString(fieldValue, predicate.op, predicate.value)
-            is Double -> compareDouble(fieldValue, predicate.op, predicate.value.toDoubleOrNull())
-            else -> false
+        return BeatmapEntryModel.where(
+            db,
+            orderBy = query.sortBy?.let(::sortColumn),
+            descending = query.sortDescending,
+            offset = query.offset,
+            limit = query.limit
+        ) {
+            conditions.reduceOrNull { left, right -> left and right }
+                ?: (BeatmapEntryModel.id gt 0L)
         }
     }
 
-    private fun compareString(actual: String, op: FilterOp, expected: String): Boolean = when (op) {
-        FilterOp.EQ -> actual.equals(expected, ignoreCase = true)
-        FilterOp.NEQ -> !actual.equals(expected, ignoreCase = true)
-        FilterOp.CONTAINS -> actual.contains(expected, ignoreCase = true)
-        else -> false
-    }
+    private fun predicate(predicate: FilterPredicate): Condition? {
+        return when (predicate.field) {
+            "artist" -> stringPredicate(BeatmapEntryModel.artist, predicate)
+            "artistUnicode" -> stringPredicate(BeatmapEntryModel.artistUnicode, predicate)
+            "title" -> stringPredicate(BeatmapEntryModel.title, predicate)
+            "titleUnicode" -> stringPredicate(BeatmapEntryModel.titleUnicode, predicate)
+            "mapper" -> stringPredicate(BeatmapEntryModel.mapper, predicate)
+            "version" -> stringPredicate(BeatmapEntryModel.version, predicate)
+            "source" -> stringPredicate(BeatmapEntryModel.source, predicate)
+            "status" -> stringPredicate(BeatmapEntryModel.status, predicate)
 
-    private fun compareDouble(actual: Double, op: FilterOp, expected: Double?): Boolean {
-        if (expected == null) return false
-        return when (op) {
-            FilterOp.EQ -> actual == expected
-            FilterOp.NEQ -> actual != expected
-            FilterOp.GT -> actual > expected
-            FilterOp.GTE -> actual >= expected
-            FilterOp.LT -> actual < expected
-            FilterOp.LTE -> actual <= expected
-            FilterOp.CONTAINS -> false
+            "id" -> longPredicate(BeatmapEntryModel.id, predicate)
+            "setId" -> longPredicate(BeatmapEntryModel.setId, predicate)
+            "circles" -> longPredicate(BeatmapEntryModel.circles, predicate)
+            "sliders" -> longPredicate(BeatmapEntryModel.sliders, predicate)
+            "spinners" -> longPredicate(BeatmapEntryModel.spinners, predicate)
+            "maxCombo" -> longPredicate(BeatmapEntryModel.maxCombo, predicate)
+            "mp3Length" -> longPredicate(BeatmapEntryModel.mp3Length, predicate)
+
+            "starsTotal" -> doublePredicate(BeatmapEntryModel.starsTotal, predicate)
+            "starsAim" -> doublePredicate(BeatmapEntryModel.starsAim, predicate)
+            "starsSpeed" -> doublePredicate(BeatmapEntryModel.starsSpeed, predicate)
+            "ar" -> doublePredicate(BeatmapEntryModel.ar, predicate)
+            "cs" -> doublePredicate(BeatmapEntryModel.cs, predicate)
+            "od" -> doublePredicate(BeatmapEntryModel.od, predicate)
+            "hp" -> doublePredicate(BeatmapEntryModel.hp, predicate)
+            "bpm" -> doublePredicate(BeatmapEntryModel.bpm, predicate)
+
+            else -> null
         }
     }
 
-    private fun beatmapComparator(field: String): Comparator<BeatmapEntry> = when (field) {
-        "id" -> compareBy { it.id }
-        "setId" -> compareBy { it.setId }
-        "checksum" -> compareBy { it.checksum }
-        "artist" -> compareBy { it.artist }
-        "artistUnicode" -> compareBy { it.artistUnicode }
-        "title" -> compareBy { it.title }
-        "titleUnicode" -> compareBy { it.titleUnicode }
-        "mapper" -> compareBy { it.mapper }
-        "version" -> compareBy { it.version }
-        "source" -> compareBy { it.source }
-        "status" -> compareBy { it.status }
-        "starsTotal" -> compareBy { it.starsTotal }
-        "starsAim" -> compareBy { it.starsAim }
-        "starsSpeed" -> compareBy { it.starsSpeed }
-        "ar" -> compareBy { it.ar }
-        "cs" -> compareBy { it.cs }
-        "od" -> compareBy { it.od }
-        "hp" -> compareBy { it.hp }
-        "bpm" -> compareBy { it.bpm }
-        "circles" -> compareBy { it.circles }
-        "sliders" -> compareBy { it.sliders }
-        "spinners" -> compareBy { it.spinners }
-        "maxCombo" -> compareBy { it.maxCombo }
-        "mp3Length" -> compareBy { it.mp3Length }
-        "firstSeenAt" -> compareBy { it.firstSeenAt }
-        "lastSeenAt" -> compareBy { it.lastSeenAt }
-        else -> compareBy { it.id }
+    private fun stringPredicate(
+        column: Column<String>,
+        predicate: FilterPredicate
+    ): Condition? {
+        return when (predicate.op) {
+            FilterOp.EQ -> column eq predicate.value
+            FilterOp.NEQ -> column neq predicate.value
+            FilterOp.CONTAINS -> column contains predicate.value
+            else -> null
+        }
     }
+
+    private fun longPredicate(
+        column: Column<Long>,
+        predicate: FilterPredicate
+    ): Condition? {
+        val value = predicate.value.toLongOrNull() ?: return null
+
+        return when (predicate.op) {
+            FilterOp.EQ -> column eq value
+            FilterOp.NEQ -> column neq value
+            FilterOp.GT -> column gt value
+            FilterOp.GTE -> column gte value
+            FilterOp.LT -> column lt value
+            FilterOp.LTE -> column lte value
+            FilterOp.CONTAINS -> null
+        }
+    }
+
+    private fun doublePredicate(
+        column: Column<Double>,
+        predicate: FilterPredicate
+    ): Condition? {
+        val value = predicate.value.toDoubleOrNull() ?: return null
+
+        return when (predicate.op) {
+            FilterOp.EQ -> column eq value
+            FilterOp.NEQ -> column neq value
+            FilterOp.GT -> column gt value
+            FilterOp.GTE -> column gte value
+            FilterOp.LT -> column lt value
+            FilterOp.LTE -> column lte value
+            FilterOp.CONTAINS -> null
+        }
+    }
+
+    private fun sortColumn(field: String) =
+        when (field) {
+            "id" -> BeatmapEntryModel.id
+            "setId" -> BeatmapEntryModel.setId
+            "checksum" -> BeatmapEntryModel.checksum
+            "artist" -> BeatmapEntryModel.artist
+            "artistUnicode" -> BeatmapEntryModel.artistUnicode
+            "title" -> BeatmapEntryModel.title
+            "titleUnicode" -> BeatmapEntryModel.titleUnicode
+            "mapper" -> BeatmapEntryModel.mapper
+            "version" -> BeatmapEntryModel.version
+            "source" -> BeatmapEntryModel.source
+            "status" -> BeatmapEntryModel.status
+            "starsTotal" -> BeatmapEntryModel.starsTotal
+            "starsAim" -> BeatmapEntryModel.starsAim
+            "starsSpeed" -> BeatmapEntryModel.starsSpeed
+            "ar" -> BeatmapEntryModel.ar
+            "cs" -> BeatmapEntryModel.cs
+            "od" -> BeatmapEntryModel.od
+            "hp" -> BeatmapEntryModel.hp
+            "bpm" -> BeatmapEntryModel.bpm
+            "circles" -> BeatmapEntryModel.circles
+            "sliders" -> BeatmapEntryModel.sliders
+            "spinners" -> BeatmapEntryModel.spinners
+            "maxCombo" -> BeatmapEntryModel.maxCombo
+            "mp3Length" -> BeatmapEntryModel.mp3Length
+            "firstSeenAt" -> BeatmapEntryModel.firstSeenAt
+            "lastSeenAt" -> BeatmapEntryModel.lastSeenAt
+            else -> BeatmapEntryModel.id
+        }
 }
