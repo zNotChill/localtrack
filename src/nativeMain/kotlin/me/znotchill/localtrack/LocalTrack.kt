@@ -12,6 +12,7 @@ import me.znotchill.localtrack.db.ScoreModel
 import me.znotchill.localtrack.db.TrackRepo
 import me.znotchill.localtrack.storage.config.ConfigManager
 import me.znotchill.localtrack.tosu.GameManager
+import me.znotchill.localtrack.tosu.PpRecalculator
 import me.znotchill.localtrack.tosu.TosuProcess
 import me.znotchill.localtrack.tosu.TosuSetup
 
@@ -54,6 +55,15 @@ object LocalTrack {
             database.createTable(ScoreModel)
             database.createTable(BeatmapEntryModel)
             database.createTable(ProfileSnapshotModel)
+            println(ScoreModel.migrate(database))
+            BeatmapEntryModel.migrate(database)
+            ProfileSnapshotModel.migrate(database)
+
+            PpRecalculator(database, GameManager.client).recalculateAll(
+                onProgress = { done, total ->
+                    Logger.i("Recalculating ALL scores: $done/$total")
+                }
+            )
         } catch (e: Exception) {
             e.printStackTrace()
         }

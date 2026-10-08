@@ -34,6 +34,14 @@ data class Score(
     val hitErrorArray: List<Double>,
     val misses: List<Long> = emptyList(),
 
+    val countGeki: Long? = null,
+    val countKatu: Long? = null,
+    val sliderEndHits: Long? = null,
+    val smallTickHits: Long? = null,
+    val largeTickHits: Long? = null,
+    val isLazer: Boolean? = null,
+    val beatmapPath: String? = null,
+
     val isConvert: Boolean = true,
     val mode: GameMode,
 )
@@ -84,6 +92,14 @@ object ScoreModel : Model<Score>("scores") {
     val isConvert = column("isConvert") { it.isConvert }
     val mode = enum("mode", GameMode.serializer()) { it.mode }
 
+    val countGeki = nullable("countGeki") { it.countGeki }
+    val countKatu = nullable("countKatu") { it.countKatu }
+    val sliderEndHits = nullable("sliderEndHits") { it.sliderEndHits }
+    val smallTickHits = nullable("smallTickHits") { it.smallTickHits }
+    val largeTickHits = nullable("largeTickHits") { it.largeTickHits }
+    val isLazer = nullable("isLazer") { it.isLazer }
+    val beatmapPath = nullable("beatmapPath") { it.beatmapPath }
+
     override fun decode(row: Row): Score {
         return Score(
             id = row[id],
@@ -107,6 +123,14 @@ object ScoreModel : Model<Score>("scores") {
             unstableRate = row[unstableRate],
             hitErrorArray = row[hitErrorArray],
             misses = row[misses],
+
+            countGeki = row[countGeki],
+            countKatu = row[countKatu],
+            sliderEndHits = row[sliderEndHits],
+            smallTickHits = row[smallTickHits],
+            largeTickHits = row[largeTickHits],
+            isLazer = row[isLazer],
+            beatmapPath = row[beatmapPath],
 
             isConvert = row[isConvert],
             mode = row[mode],
