@@ -9,12 +9,11 @@ import io.ktor.server.engine.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.routing.*
-import kotlinx.cinterop.ExperimentalForeignApi
 import me.znotchill.localtrack.api.v1.mapRoutesV1
 import me.znotchill.localtrack.api.v1.scoreRoutesV1
 import me.znotchill.localtrack.json
 
-class LocalTrackAPI {
+object LocalTrackAPI {
     lateinit var server: EmbeddedServer<*, *>
 
     fun Application.apiModule() {

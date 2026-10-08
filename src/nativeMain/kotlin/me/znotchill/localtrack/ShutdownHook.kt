@@ -2,9 +2,9 @@ package me.znotchill.localtrack
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.staticCFunction
+import me.znotchill.localtrack.api.LocalTrackAPI
 import platform.posix.SIGINT
 import platform.posix.SIGTERM
-import platform.posix.atexit
 import platform.posix.signal
 
 object ShutdownHook {
@@ -13,14 +13,14 @@ object ShutdownHook {
         signal(
             SIGINT,
             staticCFunction<Int, Unit> {
-                LocalTrack.instance.api.stop()
+                LocalTrackAPI.stop()
             }
         )
 
         signal(
             SIGTERM,
             staticCFunction<Int, Unit> {
-                LocalTrack.instance.api.stop()
+                LocalTrackAPI.stop()
             }
         )
     }

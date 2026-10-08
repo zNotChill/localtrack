@@ -20,7 +20,7 @@ class GameStateChange(
 ) : Event {
     suspend fun onFire() {
         println("new: $newGameState old: $oldGameState")
-        val repo = LocalTrack.instance.repo
+        val repo = LocalTrack.repo
 
         if (newGameState != GameState.RESULT_SCREEN)
             return println("new state != result_screen")

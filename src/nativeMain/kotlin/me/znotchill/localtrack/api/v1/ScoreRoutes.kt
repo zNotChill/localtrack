@@ -12,7 +12,7 @@ fun Route.scoreRoutesV1() {
     route("/scores") {
         get {
             call.respond(
-                LocalTrack.instance.repo.getRecentScoresWithBeatmaps(50)
+                LocalTrack.repo.getRecentScoresWithBeatmaps(50)
             )
         }
         query {
@@ -25,7 +25,7 @@ fun Route.scoreRoutesV1() {
             }
 
             call.respond(
-                LocalTrack.instance.repo.getRecentScoresWithBeatmaps(
+                LocalTrack.repo.getRecentScoresWithBeatmaps(
                     request.limit ?: 50
                 )
             )

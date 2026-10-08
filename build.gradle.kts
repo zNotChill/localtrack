@@ -50,7 +50,7 @@ kotlin {
 
     sourceSets {
         nativeMain.dependencies {
-            implementation(libs.logback)
+            implementation("co.touchlab:kermit:2.2.0")
             implementation(libs.ktor.server.core)
             implementation(libs.ktor.server.content.negotiation)
             implementation(libs.ktor.server.cors)
@@ -67,6 +67,9 @@ kotlin {
             implementation("io.github.smyrgeorge:sqlx4k:1.13.0")
             implementation("io.github.smyrgeorge:sqlx4k-sqlite:1.13.0")
             implementation("com.squareup.okio:okio:3.18.1")
+            implementation("com.varabyte.kotter:kotter:1.4.0")
+            implementation("com.akuleshov7:ktoml-core:0.7.1")
+            implementation("com.akuleshov7:ktoml-file:0.7.1")
         }
     }
 }

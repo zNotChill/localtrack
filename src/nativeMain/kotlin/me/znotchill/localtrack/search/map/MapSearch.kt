@@ -19,7 +19,7 @@ import me.znotchill.localtrack.db.BeatmapEntryModel
 
 object MapSearch {
     val db: Database
-        get() = LocalTrack.instance.db
+        get() = LocalTrack.db
 
     suspend fun queryBeatmaps(query: MapQuery): List<BeatmapEntry> {
         val conditions = query.predicates.mapNotNull(::predicate)
