@@ -28,7 +28,7 @@ data class ProcessConfig(
 
 @Serializable
 data class WebsiteConfig(
-    val optionsConfig: WebsiteOptionsConfig = WebsiteOptionsConfig()
+    var options: WebsiteOptionsConfig = WebsiteOptionsConfig()
 )
 
 @Serializable

@@ -1,13 +1,18 @@
 package me.znotchill.localtrack.storage.config
 
 import com.akuleshov7.ktoml.Toml
+import com.akuleshov7.ktoml.TomlInputConfig
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import me.znotchill.localtrack.storage.StorageManager
 
 object ConfigManager {
     var config: Config = Config()
-    val toml = Toml()
+    val toml = Toml(
+        inputConfig = TomlInputConfig(
+            ignoreUnknownNames = true
+        )
+    )
 
     fun init() {
         if (!StorageManager.exists("config.toml"))

@@ -10,6 +10,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.routing.*
 import me.znotchill.localtrack.api.v1.mapRoutesV1
+import me.znotchill.localtrack.api.v1.optionsRoutesV1
 import me.znotchill.localtrack.api.v1.scoreRoutesV1
 import me.znotchill.localtrack.json
 
@@ -31,6 +32,7 @@ object LocalTrackAPI {
             route("/api/v1") {
                 scoreRoutesV1()
                 mapRoutesV1()
+                optionsRoutesV1()
             }
         }
     }
@@ -38,8 +40,13 @@ object LocalTrackAPI {
     fun start() {
         server = embeddedServer(
             factory = CIO,
-            port = 1727,
-            host = "127.0.0.1",
+            configure = {
+                connector {
+                    host = "127.0.0.1"
+                    port = 1727
+                }
+                reuseAddress = true
+            }
         ) {
             apiModule()
         }
