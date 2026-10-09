@@ -5,24 +5,33 @@ import Container from "../../Container";
 import MapStatusPill from "../../pill/status/MapStatusPill";
 import StarPill from "../../pill/star/StarPill";
 import { Score } from "~/classes/Score";
-import Pill from "~/components/pill/Pill";
 import { getStarRatingSoloTextColor, getStarRatingTextColor } from "~/classes/StarRating";
-import { getScorePost } from "~/classes/ScorePost";
+import { useOption } from "~/components/option/OptionsContext";
 
 function ScoreCard(props: { map: BeatmapEntry, score: Score }) {
 	const score = props.score
 	const map = props.map
 
-	const isMaxPP = props.score.pp == props.score.ppFc;
+	const showDecimals = useOption("showDecimalPPValues");
+	const formatPP = (pp: number | null | undefined) =>
+		showDecimals() === false
+			? Math.round(pp ?? 0).toLocaleString()
+			: (pp ?? 0).toFixed(2);
 
-	console.log(getScorePost(props.score, props.map));
+	const renderMapBackgrounds = useOption("renderMapBackgrounds");
+	const mapBackground = () =>
+		renderMapBackgrounds() === true
+			? <div
+				class="background"
+				style={`background-image: url(https://assets.ppy.sh/beatmaps/${map.setId}/covers/cover.jpg)`}
+			/> : <></>
+
+
+	const isMaxPP = props.score.pp == props.score.ppFc;
 
 	return (
 		<Container class="map-card score-card">
-			<div
-				class="background"
-				style={`background-image: url(https://assets.ppy.sh/beatmaps/${map.setId}/covers/cover.jpg)`}
-			/>
+			{mapBackground()}
 
 			<div class="content">
 				<div class="row">
@@ -57,22 +66,17 @@ function ScoreCard(props: { map: BeatmapEntry, score: Score }) {
 					  </div>
 					  
 					  <div class="stat pp">
-						  
-						  {!isMaxPP ? (
+						{!isMaxPP ? (
 							<span class="stat-max-value">
-								{(score.ppFc ?? 0).toFixed(2)}
+								{formatPP(score.ppFc)}
 							</span>
-						  ) : ``}
+						) : ``}
 
-						  <span
-							class={
-							  "stat-value " +
-							  (isMaxPP ? `perfect-value` : ``)
-						  }>
-							  {(score.pp ?? 0).toFixed(2)}
-						  </span>
-						  <span class="stat-label">PP</span>
-					  </div>
+						<span class={"stat-value " + (isMaxPP ? `perfect-value` : ``)}>
+							{formatPP(score.pp)}
+						</span>
+						<span class="stat-label">PP</span>
+					</div>
 
 					  <div class="stat accuracy">
 						  <span

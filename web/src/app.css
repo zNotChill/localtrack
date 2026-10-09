@@ -1,3 +1,14 @@
+:root {
+  --hue: 298;
+
+  --container-color: hsl(var(--hue), 13%, 12%);
+  --container-border: hsla(var(--hue), 19%, 83%, 0.12);
+  --accent: hsl(var(--hue), 49%, 56%);
+
+  --dropdown-color: var(--container-color);
+  --dropdown-border: var(--container-border);
+}
+
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -7,8 +18,8 @@
 }
 
 html {
-  background-color: #111217;
-  color: rgb(204, 204, 220);
+  background-color: hsl(var(--hue), 15%, 8%);
+  color: hsl(var(--hue), 15%, 83%);
 }
 
 .card-grid {
@@ -31,4 +42,16 @@ html {
   display: flex;
   flex-direction: row;
   gap: 5px;
+}
+
+input[type="checkbox"] {
+  margin: 0;
+  width: 14px;
+  height: 14px;
+}
+input[type="checkbox"]:checked {
+  accent-color: ;
+}
+label {
+  font-size: 18px;
 }

@@ -28,10 +28,16 @@ data class ProcessConfig(
 
 @Serializable
 data class WebsiteConfig(
+    /**
+     * Whether we should allow options to be updated
+     * directly from the API
+     */
+    var allowApiOptionsUpdates: Boolean = true,
     var options: WebsiteOptionsConfig = WebsiteOptionsConfig()
 )
 
 @Serializable
 data class WebsiteOptionsConfig(
     val showDecimalPPValues: Boolean = true,
+    val renderMapBackgrounds: Boolean = true,
 )

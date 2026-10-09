@@ -20,6 +20,8 @@ object LocalTrackAPI {
     fun Application.apiModule() {
         install(CORS) {
             allowMethod(HttpMethod.Query)
+            allowMethod(HttpMethod.Patch)
+            allowMethod(HttpMethod.Post)
             allowHost("localhost:3000")
             allowHeader(HttpHeaders.ContentType)
         }

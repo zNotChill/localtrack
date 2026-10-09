@@ -1,7 +1,6 @@
 package me.znotchill.localtrack.api.v1
 
 import co.touchlab.kermit.Logger
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -73,12 +72,12 @@ fun Route.optionsRoutesV1() {
                 )
             }
 
+            call.respond(updated)
             ConfigManager.config.website.options = updated
             ConfigManager.save()
 
             Logger.i("Config was updated through API, saved to disk!")
 
-            call.respond(updated)
         }
     }
 }
