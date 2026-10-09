@@ -1,7 +1,6 @@
 package me.znotchill.localtrack.search.map
 
 import me.znotchill.kelp.Database
-import me.znotchill.kelp.UserModel.where
 import me.znotchill.kelp.column.Column
 import me.znotchill.kelp.conditions.Condition
 import me.znotchill.kelp.conditions.and
@@ -16,6 +15,7 @@ import me.znotchill.localtrack.LocalTrack
 import me.znotchill.localtrack.api.v1.queries.MapQuery
 import me.znotchill.localtrack.db.BeatmapEntry
 import me.znotchill.localtrack.db.BeatmapEntryModel
+import me.znotchill.localtrack.db.BeatmapEntryModel.where
 
 object MapSearch {
     val db: Database

@@ -4,8 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Config(
+    var version: Int? = null,
     var setup: SetupConfig = SetupConfig(),
-    var process: ProcessConfig = ProcessConfig()
+    var process: ProcessConfig = ProcessConfig(),
+    var website: WebsiteConfig = WebsiteConfig()
 )
 
 @Serializable
@@ -22,4 +24,14 @@ data class SetupConfig(
 @Serializable
 data class ProcessConfig(
     var startup: Boolean = false
+)
+
+@Serializable
+data class WebsiteConfig(
+    val optionsConfig: WebsiteOptionsConfig = WebsiteOptionsConfig()
+)
+
+@Serializable
+data class WebsiteOptionsConfig(
+    val showDecimalPPValues: Boolean = true,
 )

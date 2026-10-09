@@ -22,7 +22,7 @@ version = "1.0.0"
 repositories {
     mavenLocal()
     mavenCentral()
-    maven("https://repo.znotchill.me/repository/maven-releases/")
+    maven("https://repo.znotchill.me/releases/")
 }
 
 kotlin {
@@ -61,9 +61,9 @@ kotlin {
             implementation(libs.ktor.network)
             implementation(libs.ktor.network.tls)
             implementation(libs.ktor.client.core)
-            implementation("me.znotchill.kiwi:core:1.0.0")
-            implementation("me.znotchill.kiwi:network:1.0.0")
-            implementation("me.znotchill:kelp:1.0.0")
+            implementation("me.znotchill.kiwi:core:1.0.1")
+            implementation("me.znotchill.kiwi:network:1.0.1")
+            implementation("me.znotchill.kelp:core:1.1.0")
             implementation("io.github.smyrgeorge:sqlx4k:1.13.0")
             implementation("io.github.smyrgeorge:sqlx4k-sqlite:1.13.0")
             implementation("com.squareup.okio:okio:3.18.1")

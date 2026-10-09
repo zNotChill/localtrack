@@ -2,10 +2,10 @@ package me.znotchill.localtrack.db
 
 import kotlinx.serialization.Serializable
 import me.znotchill.kelp.Database
-import me.znotchill.kelp.UserModel.update
-import me.znotchill.kelp.UserModel.where
 import me.znotchill.kelp.conditions.eq
 import me.znotchill.kelp.conditions.isLatest
+import me.znotchill.localtrack.db.BeatmapEntryModel.update
+import me.znotchill.localtrack.db.BeatmapEntryModel.where
 
 class TrackRepo(
     val database: Database

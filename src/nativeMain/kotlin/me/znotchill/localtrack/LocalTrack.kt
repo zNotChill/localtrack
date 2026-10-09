@@ -44,6 +44,13 @@ object LocalTrack {
             } else Logger.i("found existing tosu process!")
         }
 
+        val configVersion = ConfigManager.config.version
+        if (configVersion != Constants.CONFIG_VERSION) {
+            ConfigManager.config.version = Constants.CONFIG_VERSION
+            Logger.i("config.toml is old!")
+            ConfigManager.save()
+        }
+
         val database = Database(
             driver = SQLite(
                 url = "sqlite://localtrack.db"
@@ -55,14 +62,13 @@ object LocalTrack {
             database.createTable(ScoreModel)
             database.createTable(BeatmapEntryModel)
             database.createTable(ProfileSnapshotModel)
-            println(ScoreModel.migrate(database))
+            ScoreModel.migrate(database)
             BeatmapEntryModel.migrate(database)
             ProfileSnapshotModel.migrate(database)
 
+            // todo: make this an optional action on the website
             PpRecalculator(database, GameManager.client).recalculateAll(
-                onProgress = { done, total ->
-                    Logger.i("Recalculating ALL scores: $done/$total")
-                }
+                onProgress = { done, total -> }
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -71,11 +77,6 @@ object LocalTrack {
 
         db = database
         repo = TrackRepo(database)
-
-        println("ALL SCORES:")
-        println(
-            ScoreModel.getAll(database).size
-        )
 
         scope.launch {
             GameManager.websocketLoop()
