@@ -63,12 +63,12 @@ fun Route.optionsRoutesV1() {
             } catch (e: Exception) {
                 if (e.message != null && e.message!!.startsWith("Failed to parse")) {
                     return@patch call.respond(
-                        HttpStatusCode.BadRequest,
+                        ApiMessage.INVALID_REQUEST_BODY,
                         "Invalid type provided for ${request.path}"
                     )
                 }
                 return@patch call.respond(
-                    HttpStatusCode.BadRequest,
+                    ApiMessage.INVALID_REQUEST_BODY,
                     e.message ?: "Invalid option"
                 )
             }
